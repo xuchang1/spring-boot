@@ -101,6 +101,8 @@ public class TomcatWebServer implements WebServer {
 		this.tomcat = tomcat;
 		this.autoStart = autoStart;
 		this.gracefulShutdown = (shutdown == Shutdown.GRACEFUL) ? new GracefulShutdown(tomcat) : null;
+
+		// 初始化
 		initialize();
 	}
 
@@ -110,6 +112,7 @@ public class TomcatWebServer implements WebServer {
 			try {
 				addInstanceIdToEngineName();
 
+				// 此处返回直接创建缓存的TomcatEmbeddedContext对象
 				Context context = findContext();
 				context.addLifecycleListener((event) -> {
 					if (context.equals(event.getSource()) && Lifecycle.START_EVENT.equals(event.getType())) {
@@ -120,6 +123,7 @@ public class TomcatWebServer implements WebServer {
 				});
 
 				// Start the server to trigger initialization listeners
+				// tomcat启动
 				this.tomcat.start();
 
 				// We can re-throw failure exception directly in the main thread

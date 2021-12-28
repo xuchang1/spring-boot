@@ -106,6 +106,7 @@ import org.springframework.util.StringUtils;
  * @see #setContextLifecycleListeners(Collection)
  * @see TomcatWebServer
  */
+// 通过 ServletWebServerFactoryConfiguration 配置类加载的
 public class TomcatServletWebServerFactory extends AbstractServletWebServerFactory
 		implements ConfigurableTomcatWebServerFactory, ResourceLoaderAware {
 
@@ -189,11 +190,17 @@ public class TomcatServletWebServerFactory extends AbstractServletWebServerFacto
 		if (this.disableMBeanRegistry) {
 			Registry.disableRegistry();
 		}
+
+		// 创建Tomcat并进行一些配置
 		Tomcat tomcat = new Tomcat();
 		File baseDir = (this.baseDirectory != null) ? this.baseDirectory : createTempDir("tomcat");
 		tomcat.setBaseDir(baseDir.getAbsolutePath());
 		Connector connector = new Connector(this.protocol);
 		connector.setThrowOnFailure(true);
+
+		// 该步时会创建一个Server对象，并创建一个Service缓存到Server中。
+		// Server: 可以理解为一个Servlet容器,Service: 不同类型的连接服务，如non-SSL、SSL连接。
+		// 一个 Server 中可以包含多个Service。
 		tomcat.getService().addConnector(connector);
 		customizeConnector(connector);
 		tomcat.setConnector(connector);
@@ -202,7 +209,11 @@ public class TomcatServletWebServerFactory extends AbstractServletWebServerFacto
 		for (Connector additionalConnector : this.additionalTomcatConnectors) {
 			tomcat.getService().addConnector(additionalConnector);
 		}
+
+		// 创建TomcatEmbeddedContext对象并进行一些配置工作，然后缓存到Host中
 		prepareContext(tomcat.getHost(), initializers);
+
+		// 创建TomcatWebServer对象，并执行初始化操作
 		return getTomcatWebServer(tomcat);
 	}
 
@@ -215,6 +226,8 @@ public class TomcatServletWebServerFactory extends AbstractServletWebServerFacto
 
 	protected void prepareContext(Host host, ServletContextInitializer[] initializers) {
 		File documentRoot = getValidDocumentRoot();
+
+		// ServletContextInitializer的回调通过该类实现（继承自StandardContext对象，内部有 initializers 缓存）
 		TomcatEmbeddedContext context = new TomcatEmbeddedContext();
 		if (documentRoot != null) {
 			context.setResources(new LoaderHidingResourceRoot(context));
@@ -248,9 +261,17 @@ public class TomcatServletWebServerFactory extends AbstractServletWebServerFacto
 			addJasperInitializer(context);
 		}
 		context.addLifecycleListener(new StaticResourceConfigurer(context));
+
+		// 手动添加了一些ServletContextInitializer
 		ServletContextInitializer[] initializersToUse = mergeInitializers(initializers);
+
+		// host对象缓存容器（未启动）
 		host.addChild(context);
+
+		// context将initializersToUse缓存，并进行其他配置
 		configureContext(context, initializersToUse);
+
+		// 空实现
 		postProcessContext(context);
 	}
 
@@ -364,6 +385,7 @@ public class TomcatServletWebServerFactory extends AbstractServletWebServerFacto
 	 * @param initializers initializers to apply
 	 */
 	protected void configureContext(Context context, ServletContextInitializer[] initializers) {
+		// TomcatStarter 是 ServletContainerInitializer 接口的实现，内部缓存了initializers后放置到context中
 		TomcatStarter starter = new TomcatStarter(initializers);
 		if (context instanceof TomcatEmbeddedContext) {
 			TomcatEmbeddedContext embeddedContext = (TomcatEmbeddedContext) context;

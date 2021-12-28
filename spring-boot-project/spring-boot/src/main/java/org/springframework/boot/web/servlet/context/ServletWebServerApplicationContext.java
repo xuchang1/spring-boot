@@ -157,6 +157,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 	protected void onRefresh() {
 		super.onRefresh();
 		try {
+			// 创建WebServer
 			createWebServer();
 		}
 		catch (Throwable ex) {
@@ -224,6 +225,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 	 * @see #prepareWebApplicationContext(ServletContext)
 	 */
 	private org.springframework.boot.web.servlet.ServletContextInitializer getSelfInitializer() {
+		// 返回的是个ServletContextInitializer对象，selfInitialize()方法为接口实现方法的内容。容器启动时会被回调
 		return this::selfInitialize;
 	}
 
