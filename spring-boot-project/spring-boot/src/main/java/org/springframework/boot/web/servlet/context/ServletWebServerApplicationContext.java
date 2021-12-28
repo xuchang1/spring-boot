@@ -180,6 +180,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 			StartupStep createWebServer = this.getApplicationStartup().start("spring.boot.webserver.create");
 			ServletWebServerFactory factory = getWebServerFactory();
 			createWebServer.tag("factory", factory.getClass().toString());
+			// 创建webServer
 			this.webServer = factory.getWebServer(getSelfInitializer());
 			createWebServer.end();
 			getBeanFactory().registerSingleton("webServerGracefulShutdown",
@@ -225,10 +226,14 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 	 * @see #prepareWebApplicationContext(ServletContext)
 	 */
 	private org.springframework.boot.web.servlet.ServletContextInitializer getSelfInitializer() {
-		// 返回的是个ServletContextInitializer对象，selfInitialize()方法为接口实现方法的内容。容器启动时会被回调
+		// 返回的是个 ServletContextInitializer 对象，selfInitialize()方法为接口实现方法的内容。容器启动时会被回调
 		return this::selfInitialize;
 	}
 
+	/**
+	 * 自定义 ServletContextInitializer 处理的逻辑
+	 * 如 ServletRegistrationBean、FilterRegistrationBean、ServletContextInitializer 等实现类发现处理
+	 */
 	private void selfInitialize(ServletContext servletContext) throws ServletException {
 		prepareWebApplicationContext(servletContext);
 		registerApplicationScope(servletContext);

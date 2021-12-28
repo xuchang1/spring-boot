@@ -202,6 +202,7 @@ public class TomcatServletWebServerFactory extends AbstractServletWebServerFacto
 		// Server: 可以理解为一个Servlet容器,Service: 不同类型的连接服务，如non-SSL、SSL连接。
 		// 一个 Server 中可以包含多个Service。
 		tomcat.getService().addConnector(connector);
+
 		customizeConnector(connector);
 		tomcat.setConnector(connector);
 		tomcat.getHost().setAutoDeploy(false);
