@@ -207,6 +207,7 @@ public abstract class AbstractFilterRegistrationBean<T extends Filter> extends D
 	@Override
 	protected Dynamic addRegistration(String description, ServletContext servletContext) {
 		Filter filter = getFilter();
+		// 将 Filter 维护到 TomcatEmbeddedContext 中
 		return servletContext.addFilter(getOrDeduceName(filter), filter);
 	}
 

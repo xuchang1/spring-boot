@@ -83,11 +83,14 @@ public class ServletContextInitializerBeans extends AbstractCollection<ServletCo
 		this.initializers = new LinkedMultiValueMap<>();
 		this.initializerTypes = (initializerTypes.length != 0) ? Arrays.asList(initializerTypes)
 				: Collections.singletonList(ServletContextInitializer.class);
+		// 基于initializerTypes中的Class类型，在容器中找到对应的bean实现并添加到（dispatchServlet在该步中缓存）
 		addServletContextInitializerBeans(beanFactory);
+		// RegistrationBeanAdapter类型的处理
 		addAdaptableBeans(beanFactory);
 		List<ServletContextInitializer> sortedInitializers = this.initializers.values().stream()
 				.flatMap((value) -> value.stream().sorted(AnnotationAwareOrderComparator.INSTANCE))
 				.collect(Collectors.toList());
+		// 合并缓存
 		this.sortedList = Collections.unmodifiableList(sortedInitializers);
 		logMappings(this.initializers);
 	}
@@ -101,6 +104,9 @@ public class ServletContextInitializerBeans extends AbstractCollection<ServletCo
 		}
 	}
 
+	/**
+	 * 基于initializer的类型，解析对应缓存的真实数据（如Servlet、Filter等），并维护到 initializers 中
+	 */
 	private void addServletContextInitializerBean(String beanName, ServletContextInitializer initializer,
 			ListableBeanFactory beanFactory) {
 		if (initializer instanceof ServletRegistrationBean) {

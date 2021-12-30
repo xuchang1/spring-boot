@@ -16,15 +16,19 @@
 
 package smoketest.tomcat;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import javax.servlet.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.RegistrationBean;
 import org.springframework.context.annotation.Bean;
+
+import java.io.IOException;
+import java.util.Collections;
 
 @SpringBootApplication
 public class SampleTomcatApplication {
@@ -48,8 +52,35 @@ public class SampleTomcatApplication {
 		};
 	}
 
+	@Bean
+	public RegistrationBean simpleRegistrationBeanFilter() {
+		SimpleFilter simpleFilter = new SimpleFilter();
+		FilterRegistrationBean<SimpleFilter> simpleFilterFilterRegistrationBean = new FilterRegistrationBean<>();
+		simpleFilterFilterRegistrationBean.setFilter(simpleFilter);
+		simpleFilterFilterRegistrationBean.setUrlPatterns(Collections.singletonList("/*"));
+		return simpleFilterFilterRegistrationBean;
+	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(SampleTomcatApplication.class, args);
 	}
 
+}
+
+class SimpleFilter implements Filter {
+
+	@Override
+	public void init(FilterConfig filterConfig) throws ServletException {
+		Filter.super.init(filterConfig);
+	}
+
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		chain.doFilter(request, response);
+	}
+
+	@Override
+	public void destroy() {
+		Filter.super.destroy();
+	}
 }

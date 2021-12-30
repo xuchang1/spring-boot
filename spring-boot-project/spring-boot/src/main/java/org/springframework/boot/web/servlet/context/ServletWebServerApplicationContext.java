@@ -235,10 +235,12 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 	 * 如 ServletRegistrationBean、FilterRegistrationBean、ServletContextInitializer 等实现类发现处理
 	 */
 	private void selfInitialize(ServletContext servletContext) throws ServletException {
+		// servletContext 设置 ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE 属性，并将自身缓存到applicationContext中
 		prepareWebApplicationContext(servletContext);
 		registerApplicationScope(servletContext);
 		WebApplicationContextUtils.registerEnvironmentBeans(getBeanFactory(), servletContext);
 		for (ServletContextInitializer beans : getServletContextInitializerBeans()) {
+			// 触发 ServletContextInitializer 对应的onStartup方法
 			beans.onStartup(servletContext);
 		}
 	}

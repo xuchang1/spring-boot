@@ -110,6 +110,7 @@ public abstract class DynamicRegistrationBean<D extends Registration.Dynamic> ex
 			logger.info(StringUtils.capitalize(description) + " was not registered (possibly already registered?)");
 			return;
 		}
+		// 配置 Servlet、Filter 属性（url模式路径等）
 		configure(registration);
 	}
 
