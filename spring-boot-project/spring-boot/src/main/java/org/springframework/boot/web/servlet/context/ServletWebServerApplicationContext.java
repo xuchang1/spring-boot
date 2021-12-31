@@ -181,6 +181,8 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 			ServletWebServerFactory factory = getWebServerFactory();
 			createWebServer.tag("factory", factory.getClass().toString());
 			// 创建webServer
+			// (getSelfInitializer()方法: 容器中查询ServletContextInitializer实现类的bean，自定义servlet、filter在该步骤实现)
+			// tomcat容器启动时，getSelfInitializer()中的方法会被回调执行相应逻辑
 			this.webServer = factory.getWebServer(getSelfInitializer());
 			createWebServer.end();
 			getBeanFactory().registerSingleton("webServerGracefulShutdown",

@@ -302,6 +302,8 @@ public class SpringApplication {
 			context = createApplicationContext();
 			context.setApplicationStartup(this.applicationStartup);
 			prepareContext(bootstrapContext, context, environment, listeners, applicationArguments, printedBanner);
+
+			// 容器刷新，ioc容器加载
 			refreshContext(context);
 			afterRefresh(context, applicationArguments);
 			Duration timeTakenToStartup = Duration.ofNanos(System.nanoTime() - startTime);

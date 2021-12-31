@@ -102,7 +102,7 @@ public class TomcatWebServer implements WebServer {
 		this.autoStart = autoStart;
 		this.gracefulShutdown = (shutdown == Shutdown.GRACEFUL) ? new GracefulShutdown(tomcat) : null;
 
-		// 初始化
+		// 初始化并启动server
 		initialize();
 	}
 
