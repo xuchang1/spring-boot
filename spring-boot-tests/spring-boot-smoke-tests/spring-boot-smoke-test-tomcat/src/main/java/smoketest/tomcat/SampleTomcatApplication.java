@@ -17,6 +17,8 @@
 package smoketest.tomcat;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,6 +28,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.RegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.handler.MappedInterceptor;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -61,10 +69,31 @@ public class SampleTomcatApplication {
 		return simpleFilterFilterRegistrationBean;
 	}
 
+	@Bean
+	public MyWebMvcConfigurer myWebMvcConfigurer() {
+		return new MyWebMvcConfigurer();
+	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(SampleTomcatApplication.class, args);
 	}
 
+}
+
+
+class SimpleInterceptor implements HandlerInterceptor {
+	@Override
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+		System.out.println("SimpleInterceptor preHandle");
+		return true;
+	}
+}
+
+class MyWebMvcConfigurer extends WebMvcConfigurerAdapter {
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(new SimpleInterceptor());
+	}
 }
 
 class SimpleFilter implements Filter {

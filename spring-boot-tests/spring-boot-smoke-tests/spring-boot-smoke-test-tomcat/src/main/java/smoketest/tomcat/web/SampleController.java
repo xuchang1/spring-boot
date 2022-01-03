@@ -16,6 +16,7 @@
 
 package smoketest.tomcat.web;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import smoketest.tomcat.service.HelloWorldService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +30,21 @@ public class SampleController {
 	@Autowired
 	private HelloWorldService helloWorldService;
 
-	@GetMapping("/")
+	@GetMapping({"/test", "/test1", "/test/${server.servlet.context-path}"})
 	@ResponseBody
 	public String helloWorld() {
 		return this.helloWorldService.getHelloMessage();
 	}
 
+	@GetMapping("/test2/{id}")
+	@ResponseBody
+	public String helloWorld2(@PathVariable String id) {
+		return id;
+	}
+
+	@GetMapping("/test3")
+	@ResponseBody
+	public String helloWorld3(@PathVariable String id) {
+		return id;
+	}
 }

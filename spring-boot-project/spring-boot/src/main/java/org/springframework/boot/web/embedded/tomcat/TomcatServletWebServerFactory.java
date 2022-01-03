@@ -269,7 +269,7 @@ public class TomcatServletWebServerFactory extends AbstractServletWebServerFacto
 		// host对象缓存容器（未启动）
 		host.addChild(context);
 
-		// context将initializersToUse缓存，并进行其他配置
+		// 创建TomcatStarter，缓存initializersToUse，并进行其他配置
 		configureContext(context, initializersToUse);
 
 		// 空实现
@@ -416,6 +416,8 @@ public class TomcatServletWebServerFactory extends AbstractServletWebServerFacto
 		for (String webListenerClassName : getWebListenerClassNames()) {
 			context.addApplicationListener(webListenerClassName);
 		}
+
+		// 一些自定义配置实现
 		for (TomcatContextCustomizer customizer : this.tomcatContextCustomizers) {
 			customizer.customize(context);
 		}
