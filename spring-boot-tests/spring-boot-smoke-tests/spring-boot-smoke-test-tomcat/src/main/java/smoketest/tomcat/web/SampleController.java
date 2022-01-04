@@ -16,13 +16,12 @@
 
 package smoketest.tomcat.web;
 
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
+import smoketest.tomcat.entity.Person;
 import smoketest.tomcat.service.HelloWorldService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class SampleController {
@@ -44,7 +43,13 @@ public class SampleController {
 
 	@GetMapping("/test3")
 	@ResponseBody
-	public String helloWorld3(@PathVariable String id) {
+	public String helloWorld3(@RequestParam String id) {
 		return id;
+	}
+
+	@PostMapping("/test4")
+	@ResponseBody
+	public String helloWorld4(@RequestBody Person person) {
+		return person.getName();
 	}
 }
