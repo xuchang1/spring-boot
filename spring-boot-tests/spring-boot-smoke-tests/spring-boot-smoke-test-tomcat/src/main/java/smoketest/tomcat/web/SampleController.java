@@ -52,4 +52,18 @@ public class SampleController {
 	public String helloWorld4(@RequestBody Person person) {
 		return person.getName();
 	}
+
+	@GetMapping("/test5")
+	@ResponseBody
+	public Person helloWorld5(@RequestParam String id) {
+		Person person = new Person();
+		person.setName(id);
+		return person;
+	}
+
+	// 直接返回string时，会被 ViewNameMethodReturnValueHandler 解析，设置为视图名称，从而显示对应页面
+	@GetMapping("/test6")
+	public String helloWorld6() {
+		return "index.html";
+	}
 }
