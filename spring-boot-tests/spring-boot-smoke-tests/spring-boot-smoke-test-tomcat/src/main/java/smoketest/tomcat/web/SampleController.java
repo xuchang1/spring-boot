@@ -49,8 +49,8 @@ public class SampleController {
 
 	@PostMapping("/test4")
 	@ResponseBody
-	public String helloWorld4(@RequestBody Person person) {
-		return person.getName();
+	public Person helloWorld4(@RequestBody Person person) {
+		return person;
 	}
 
 	@GetMapping("/test5")
