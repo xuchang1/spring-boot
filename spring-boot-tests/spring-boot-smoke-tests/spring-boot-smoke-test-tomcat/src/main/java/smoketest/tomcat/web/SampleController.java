@@ -18,6 +18,7 @@ package smoketest.tomcat.web;
 
 import org.springframework.web.bind.annotation.*;
 import smoketest.tomcat.entity.Person;
+import smoketest.tomcat.exception.CustomException;
 import smoketest.tomcat.service.HelloWorldService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,5 +66,18 @@ public class SampleController {
 	@GetMapping("/test6")
 	public String helloWorld6() {
 		return "index.html";
+	}
+
+	// 未添加 @RequestParam 注解，RequestParamMethodArgumentResolver 在第二次传参为true时解析了该入参
+	@GetMapping("/test7")
+	@ResponseBody
+	public String helloWorld7(String id) {
+		return id;
+	}
+
+	@GetMapping("/testException")
+	@ResponseBody
+	public String helloWorld8(String id) {
+		throw new CustomException("A01", "异常测试");
 	}
 }
