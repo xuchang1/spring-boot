@@ -1,8 +1,10 @@
 package smoketest.tomcat.config;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import smoketest.tomcat.exception.CustomException;
 
 /**
@@ -12,7 +14,7 @@ import smoketest.tomcat.exception.CustomException;
 @ControllerAdvice
 public class GlobalDefaultExceptionHandler {
 
-	@ExceptionHandler(CustomException.class)
+//	@ExceptionHandler(CustomException.class)
 	@ResponseBody
 	public RespData<String> jsonCustomException(CustomException e) {
 		RespData<String> respData = new RespData<>();
@@ -23,6 +25,8 @@ public class GlobalDefaultExceptionHandler {
 	}
 
 	@ExceptionHandler(Exception.class)
+	// 修改http请求响应状态码（注意不要配置reason，不然会forward到异常码页面）
+	@ResponseStatus
 	@ResponseBody
 	public RespData<String> jsonException(Exception e) {
 		RespData<String> respData = new RespData<>();

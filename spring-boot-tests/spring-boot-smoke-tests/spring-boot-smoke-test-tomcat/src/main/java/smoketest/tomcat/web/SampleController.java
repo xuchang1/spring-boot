@@ -30,7 +30,7 @@ public class SampleController {
 	@Autowired
 	private HelloWorldService helloWorldService;
 
-	@GetMapping({"/test", "/test1", "/test/${server.servlet.context-path}"})
+	@GetMapping({"/test", "/test1", "/test${server.servlet.context-path}"})
 	@ResponseBody
 	public String helloWorld() {
 		return this.helloWorldService.getHelloMessage();
@@ -65,6 +65,7 @@ public class SampleController {
 	// 直接返回string时，会被 ViewNameMethodReturnValueHandler 解析，设置为视图名称，从而显示对应页面
 	@GetMapping("/test6")
 	public String helloWorld6() {
+//		return "index";
 		return "index.html";
 	}
 
@@ -78,6 +79,14 @@ public class SampleController {
 	@GetMapping("/testException")
 	@ResponseBody
 	public String helloWorld8(String id) {
-		throw new CustomException("A01", "异常测试");
+		throw new CustomException("A01", "11111");
+	}
+
+	// springboot内部有 BasicErrorController 类定义了/error请求的处理流程，也可以自定义并设置高优先级路由到自己的页面
+	// 如下两种方法，第一种出现异常时会路由到自定义页面，第二种会路由到内部视图上
+//	@GetMapping(value = "/error", produces = {"application/json", "text/html"})
+	@GetMapping(value = "/error")
+	public String helloWorld9() {
+		return "error.html";
 	}
 }
