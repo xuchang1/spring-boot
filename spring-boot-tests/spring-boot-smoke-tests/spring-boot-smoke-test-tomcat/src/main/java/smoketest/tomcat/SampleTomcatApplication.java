@@ -19,21 +19,17 @@ package smoketest.tomcat;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
+import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.RegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.handler.MappedInterceptor;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -75,11 +71,12 @@ public class SampleTomcatApplication {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(SampleTomcatApplication.class, args);
+		SpringApplication application = new SpringApplication(SampleTomcatApplication.class);
+		application.setBannerMode(Banner.Mode.LOG);
+		application.run(args);
 	}
 
 }
-
 
 class SimpleInterceptor implements HandlerInterceptor {
 	@Override

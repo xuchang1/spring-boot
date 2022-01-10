@@ -28,6 +28,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
  * @author Phillip Webb
  * @since 2.4.0
  */
+// 添加了一个 RandomValuePropertySource 随机数相关，用来产生随机数的
 public class RandomValuePropertySourceEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
 	/**

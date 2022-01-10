@@ -91,6 +91,8 @@ public final class ConfigurationPropertySources {
 			sources.remove(ATTACHED_PROPERTY_SOURCE_NAME);
 			attached = null;
 		}
+
+		// 重新封装了一层，加到最前面
 		if (attached == null) {
 			sources.addFirst(new ConfigurationPropertySourcesPropertySource(ATTACHED_PROPERTY_SOURCE_NAME,
 					new SpringConfigurationPropertySources(sources)));

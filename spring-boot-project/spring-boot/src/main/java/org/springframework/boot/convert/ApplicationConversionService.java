@@ -69,6 +69,7 @@ public class ApplicationConversionService extends FormattingConversionService {
 		if (embeddedValueResolver != null) {
 			setEmbeddedValueResolver(embeddedValueResolver);
 		}
+		// 一些默认的 Conversion 配置
 		configure(this);
 		this.unmodifiable = unmodifiable;
 	}
@@ -202,7 +203,9 @@ public class ApplicationConversionService extends FormattingConversionService {
 	 * ConversionService
 	 */
 	public static void configure(FormatterRegistry registry) {
+		// 配置一些默认的转换器
 		DefaultConversionService.addDefaultConverters(registry);
+		// 配置默认的格式化器
 		DefaultFormattingConversionService.addDefaultFormatters(registry);
 		addApplicationFormatters(registry);
 		addApplicationConverters(registry);
