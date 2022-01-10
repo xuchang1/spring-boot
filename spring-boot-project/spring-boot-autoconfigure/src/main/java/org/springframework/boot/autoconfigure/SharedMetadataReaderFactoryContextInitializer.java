@@ -60,6 +60,7 @@ class SharedMetadataReaderFactoryContextInitializer
 	@Override
 	public void initialize(ConfigurableApplicationContext applicationContext) {
 		BeanFactoryPostProcessor postProcessor = new CachingMetadataReaderFactoryPostProcessor(applicationContext);
+		// 添加了一个BeanFactory的后置处理器，会去注册一个名称为BEAN_NAME的对象，不知道干啥子的
 		applicationContext.addBeanFactoryPostProcessor(postProcessor);
 	}
 

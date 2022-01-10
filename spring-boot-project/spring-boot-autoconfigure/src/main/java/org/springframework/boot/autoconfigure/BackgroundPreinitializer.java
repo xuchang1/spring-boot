@@ -50,6 +50,7 @@ import org.springframework.http.converter.support.AllEncompassingFormHttpMessage
  * @since 1.3.0
  */
 @Order(LoggingApplicationListener.DEFAULT_ORDER + 1)
+// 实现后台提前执行耗时的初始化任务
 public class BackgroundPreinitializer implements ApplicationListener<SpringApplicationEvent> {
 
 	/**

@@ -125,6 +125,7 @@ public abstract class SpringBootCondition implements Condition {
 	 */
 	protected final boolean anyMatches(ConditionContext context, AnnotatedTypeMetadata metadata,
 			Condition... conditions) {
+		// 有一个匹配成功，就返回true
 		for (Condition condition : conditions) {
 			if (matches(context, metadata, condition)) {
 				return true;

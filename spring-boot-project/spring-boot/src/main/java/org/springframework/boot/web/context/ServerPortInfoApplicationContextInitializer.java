@@ -54,9 +54,13 @@ public class ServerPortInfoApplicationContextInitializer implements
 
 	@Override
 	public void initialize(ConfigurableApplicationContext applicationContext) {
+		// 添加了一个 Listener
 		applicationContext.addApplicationListener(this);
 	}
 
+	/**
+	 * 监听该事件，当WebServer初始化事件触发后，将启动的端口号缓存到environment中
+	 */
 	@Override
 	public void onApplicationEvent(WebServerInitializedEvent event) {
 		String propertyName = "local." + getName(event.getApplicationContext()) + ".port";

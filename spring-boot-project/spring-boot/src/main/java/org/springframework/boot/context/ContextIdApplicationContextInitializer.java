@@ -51,6 +51,7 @@ public class ContextIdApplicationContextInitializer
 
 	@Override
 	public void initialize(ConfigurableApplicationContext applicationContext) {
+		// id的处理，并注册了ContextId对象
 		ContextId contextId = getContextId(applicationContext);
 		applicationContext.setId(contextId.getId());
 		applicationContext.getBeanFactory().registerSingleton(ContextId.class.getName(), contextId);

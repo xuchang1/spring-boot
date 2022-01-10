@@ -27,6 +27,7 @@ import org.springframework.util.ReflectionUtils;
  *
  * @author Phillip Webb
  */
+// ReflectionUtils 的缓存、ClassLoader 的缓存清除
 class ClearCachesApplicationListener implements ApplicationListener<ContextRefreshedEvent> {
 
 	@Override

@@ -63,6 +63,7 @@ public class FileEncodingApplicationListener
 			return;
 		}
 		String encoding = System.getProperty("file.encoding");
+		// 比对系统变量的 `file.encoding` ，和环境变量的 `spring.mandatory-file-encoding` 。
 		if (encoding != null && !desired.equalsIgnoreCase(encoding)) {
 			if (logger.isErrorEnabled()) {
 				logger.error("System property 'file.encoding' is currently '" + encoding + "'. It should be '" + desired

@@ -69,6 +69,9 @@ public class DelegatingApplicationListener implements ApplicationListener<Applic
 		}
 	}
 
+	/**
+	 * 从对应的环境变量中，取出指定属性的缓存class，进行实例化
+	 */
 	@SuppressWarnings("unchecked")
 	private List<ApplicationListener<ApplicationEvent>> getListeners(ConfigurableEnvironment environment) {
 		if (environment == null) {

@@ -62,6 +62,7 @@ public class ParentContextCloserApplicationListener
 	private void maybeInstallListenerInParent(ConfigurableApplicationContext child) {
 		if (child == this.context && child.getParent() instanceof ConfigurableApplicationContext) {
 			ConfigurableApplicationContext parent = (ConfigurableApplicationContext) child.getParent();
+			// 容器关闭的监听器。父容器关闭时，会去关闭子容器
 			parent.addApplicationListener(createContextCloserListener(child));
 		}
 	}
@@ -91,6 +92,7 @@ public class ParentContextCloserApplicationListener
 		public void onApplicationEvent(ContextClosedEvent event) {
 			ConfigurableApplicationContext context = this.childContext.get();
 			if ((context != null) && (event.getApplicationContext() == context.getParent()) && context.isActive()) {
+				// 关闭子容器
 				context.close();
 			}
 		}
