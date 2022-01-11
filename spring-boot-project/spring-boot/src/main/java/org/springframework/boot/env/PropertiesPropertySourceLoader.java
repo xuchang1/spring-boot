@@ -35,6 +35,7 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
  * @author Madhura Bhave
  * @since 1.0.0
  */
+// 解析 properties、xml 后缀类型的配置文件
 public class PropertiesPropertySourceLoader implements PropertySourceLoader {
 
 	private static final String XML_FILE_EXTENSION = ".xml";
@@ -46,10 +47,15 @@ public class PropertiesPropertySourceLoader implements PropertySourceLoader {
 
 	@Override
 	public List<PropertySource<?>> load(String name, Resource resource) throws IOException {
+		// <2.1> 读取指定配置文件，返回 Map 对象
 		List<Map<String, ?>> properties = loadProperties(resource);
+
+		// <2.2> 如果 Map 为空，返回空数组
 		if (properties.isEmpty()) {
 			return Collections.emptyList();
 		}
+
+		// <2.3> 将 Map 封装成 OriginTrackedMapPropertySource 对象，然后返回单元素的数组
 		List<PropertySource<?>> propertySources = new ArrayList<>(properties.size());
 		for (int i = 0; i < properties.size(); i++) {
 			String documentNumber = (properties.size() != 1) ? " (document #" + i + ")" : "";
@@ -63,10 +69,13 @@ public class PropertiesPropertySourceLoader implements PropertySourceLoader {
 	private List<Map<String, ?>> loadProperties(Resource resource) throws IOException {
 		String filename = resource.getFilename();
 		List<Map<String, ?>> result = new ArrayList<>();
+
+		// 读取 XML 后缀的配置文件
 		if (filename != null && filename.endsWith(XML_FILE_EXTENSION)) {
 			result.add((Map) PropertiesLoaderUtils.loadProperties(resource));
 		}
 		else {
+			// 读取 Properties 后缀的配置文件
 			List<Document> documents = new OriginTrackedPropertiesLoader(resource).load();
 			documents.forEach((document) -> result.add(document.asMap()));
 		}

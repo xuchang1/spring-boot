@@ -54,6 +54,7 @@ public interface BootstrapRegistry {
 	 * @param type the instance type
 	 * @param instanceSupplier the instance supplier
 	 */
+	// 已被注册，但是还没有生成对应的单例bean。那么会被替换掉。
 	<T> void register(Class<T> type, InstanceSupplier<T> instanceSupplier);
 
 	/**

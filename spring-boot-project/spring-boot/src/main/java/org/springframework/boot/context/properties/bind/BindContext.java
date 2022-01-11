@@ -26,6 +26,7 @@ import org.springframework.boot.context.properties.source.ConfigurationPropertyS
  * @author Madhura Bhave
  * @since 2.0.0
  */
+// Bind的容器
 public interface BindContext {
 
 	/**

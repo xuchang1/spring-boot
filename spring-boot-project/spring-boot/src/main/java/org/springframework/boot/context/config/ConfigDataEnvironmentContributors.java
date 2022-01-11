@@ -70,6 +70,7 @@ class ConfigDataEnvironmentContributors implements Iterable<ConfigDataEnvironmen
 			List<ConfigDataEnvironmentContributor> contributors) {
 		this.logger = logFactory.getLog(getClass());
 		this.bootstrapContext = bootstrapContext;
+		// contributors 缓存到root的children中
 		this.root = ConfigDataEnvironmentContributor.of(contributors);
 	}
 
@@ -91,12 +92,14 @@ class ConfigDataEnvironmentContributors implements Iterable<ConfigDataEnvironmen
 	 */
 	ConfigDataEnvironmentContributors withProcessedImports(ConfigDataImporter importer,
 			ConfigDataActivationContext activationContext) {
+		// 根据有没有激活的对象，返回不同的ImportPhase的枚举类
 		ImportPhase importPhase = ImportPhase.get(activationContext);
 		this.logger.trace(LogMessage.format("Processing imports for phase %s. %s", importPhase,
 				(activationContext != null) ? activationContext : "no activation context"));
 		ConfigDataEnvironmentContributors result = this;
 		int processed = 0;
 		while (true) {
+			// 遍历
 			ConfigDataEnvironmentContributor contributor = getNextToProcess(result, activationContext, importPhase);
 			if (contributor == null) {
 				this.logger.trace(LogMessage.format("Processed imports for of %d contributors", processed));

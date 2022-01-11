@@ -44,6 +44,8 @@ import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.util.Assert;
 
 /**
+ *
+ *
  * A container object which Binds objects from one or more
  * {@link ConfigurationPropertySource ConfigurationPropertySources}.
  *
@@ -51,15 +53,26 @@ import org.springframework.util.Assert;
  * @author Madhura Bhave
  * @since 2.0.0
  */
+
+// 绑定 ConfigurationPropertySource
 public class Binder {
 
 	private static final Set<Class<?>> NON_BEAN_CLASSES = Collections
 			.unmodifiableSet(new HashSet<>(Arrays.asList(Object.class, Class.class)));
 
+	/**
+	 * ConfigurationPropertySource 集合
+	 */
 	private final Iterable<ConfigurationPropertySource> sources;
 
+	/**
+	 * 占位符解析器
+	 */
 	private final PlaceholdersResolver placeholdersResolver;
 
+	/**
+	 * 类型转换
+	 */
 	private final BindConverter bindConverter;
 
 	private final BindHandler defaultBindHandler;
@@ -523,8 +536,11 @@ public class Binder {
 	 * @since 2.2.0
 	 */
 	public static Binder get(Environment environment, BindHandler defaultBindHandler) {
+		// 基于environment中的属性，封装的SpringConfigurationPropertySources对象
 		Iterable<ConfigurationPropertySource> sources = ConfigurationPropertySources.get(environment);
 		PropertySourcesPlaceholdersResolver placeholdersResolver = new PropertySourcesPlaceholdersResolver(environment);
+
+		// 生成一个Binder
 		return new Binder(sources, placeholdersResolver, null, null, defaultBindHandler);
 	}
 

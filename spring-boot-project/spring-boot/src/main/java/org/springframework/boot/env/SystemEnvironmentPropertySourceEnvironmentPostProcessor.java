@@ -64,6 +64,7 @@ public class SystemEnvironmentPropertySourceEnvironmentPostProcessor implements 
 		Map<String, Object> originalSource = (Map<String, Object>) propertySource.getSource();
 		SystemEnvironmentPropertySource source = new OriginAwareSystemEnvironmentPropertySource(sourceName,
 				originalSource, environmentPrefix);
+		// 替换
 		environment.getPropertySources().replace(sourceName, source);
 	}
 
@@ -76,7 +77,7 @@ public class SystemEnvironmentPropertySourceEnvironmentPostProcessor implements 
 		this.order = order;
 	}
 
-	/**
+	/** get 值时，key换进行各种替换判断，也有前缀的逻辑在里面
 	 * {@link SystemEnvironmentPropertySource} that also tracks {@link Origin}.
 	 */
 	protected static class OriginAwareSystemEnvironmentPropertySource extends SystemEnvironmentPropertySource
@@ -111,6 +112,7 @@ public class SystemEnvironmentPropertySourceEnvironmentPostProcessor implements 
 
 		@Override
 		public Origin getOrigin(String key) {
+			// key 进行各种转换
 			String property = resolvePropertyName(key);
 			if (super.containsProperty(property)) {
 				return new SystemEnvironmentOrigin(property);

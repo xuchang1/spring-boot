@@ -119,6 +119,7 @@ public class StandardConfigDataLocationResolver
 		return resolve(getReferences(context, location.split()));
 	}
 
+	// 返回所有的可能性
 	private Set<StandardConfigDataReference> getReferences(ConfigDataLocationResolverContext context,
 			ConfigDataLocation[] configDataLocations) {
 		Set<StandardConfigDataReference> references = new LinkedHashSet<>();
@@ -291,9 +292,11 @@ public class StandardConfigDataLocationResolver
 	}
 
 	private List<StandardConfigDataResource> resolve(StandardConfigDataReference reference) {
+		// 不是模式匹配的解析
 		if (!this.resourceLoader.isPattern(reference.getResourceLocation())) {
 			return resolveNonPattern(reference);
 		}
+		// 模式匹配的解析
 		return resolvePattern(reference);
 	}
 

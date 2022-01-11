@@ -41,6 +41,7 @@ import org.springframework.util.ObjectUtils;
  * @see Bindable#of(Class)
  * @see Bindable#of(ResolvableType)
  */
+// 可以被bound到Binder的源数据封装
 public final class Bindable<T> {
 
 	private static final Annotation[] NO_ANNOTATIONS = {};
@@ -282,6 +283,7 @@ public final class Bindable<T> {
 
 	private static ResolvableType box(ResolvableType type) {
 		Class<?> resolved = type.resolve();
+		// 基本数据类型
 		if (resolved != null && resolved.isPrimitive()) {
 			Object array = Array.newInstance(resolved, 1);
 			Class<?> wrapperType = Array.get(array, 0).getClass();

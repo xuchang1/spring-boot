@@ -26,6 +26,7 @@ import org.springframework.boot.context.properties.source.ConfigurationPropertyN
  * @author Madhura Bhave
  * @since 2.0.0
  */
+// 在binding的过程中，进行一些额外的逻辑处理
 public interface BindHandler {
 
 	/**

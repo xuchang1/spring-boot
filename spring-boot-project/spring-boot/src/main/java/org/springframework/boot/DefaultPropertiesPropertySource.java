@@ -122,6 +122,7 @@ public class DefaultPropertiesPropertySource extends MapPropertySource {
 	 * @param propertySources the property sources to update
 	 */
 	public static void moveToEnd(MutablePropertySources propertySources) {
+		// defaultProperties 这个属性移到最后面
 		PropertySource<?> propertySource = propertySources.remove(NAME);
 		if (propertySource != null) {
 			propertySources.addLast(propertySource);

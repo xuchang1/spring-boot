@@ -31,6 +31,8 @@ import org.springframework.core.env.Environment;
  * @author Phillip Webb
  * @since 2.4.0
  */
+// 在启动并且处理Environment，但是容器可用之前，进行一些处理的接口。
+// 定义了一些获取对象的方法。（正常该类型已被注册，但是没有被实例化）
 public interface BootstrapContext {
 
 	/**

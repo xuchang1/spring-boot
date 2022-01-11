@@ -121,6 +121,7 @@ public class SpringApplicationJsonEnvironmentPostProcessor implements Environmen
 		map.forEach((key, value) -> extract(namePrefix + key, result, value));
 	}
 
+	// 提取添加前缀
 	@SuppressWarnings("unchecked")
 	private void extract(String name, Map<String, Object> result, Object value) {
 		if (value instanceof Map) {

@@ -27,6 +27,7 @@ import org.springframework.core.style.ToStringCreator;
  *
  * @author Phillip Webb
  */
+// 激活的 profiles 的封装
 class ConfigDataActivationContext {
 
 	private final CloudPlatform cloudPlatform;

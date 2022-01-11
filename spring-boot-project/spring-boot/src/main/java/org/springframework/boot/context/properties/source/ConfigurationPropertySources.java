@@ -83,16 +83,20 @@ public final class ConfigurationPropertySources {
 	 * {@link ConfigurableEnvironment})
 	 * @see #get(Environment)
 	 */
+	// springboot准备environment过程中，会调用该方法
 	public static void attach(Environment environment) {
 		Assert.isInstanceOf(ConfigurableEnvironment.class, environment);
 		MutablePropertySources sources = ((ConfigurableEnvironment) environment).getPropertySources();
 		PropertySource<?> attached = getAttached(sources);
+
+		// 不相等，则移除（基于下面添加逻辑可以知道，attached里面的source就是environment中的sources）
 		if (attached != null && attached.getSource() != sources) {
 			sources.remove(ATTACHED_PROPERTY_SOURCE_NAME);
 			attached = null;
 		}
 
-		// 重新封装了一层，加到最前面
+		// 重新封装了一层，加到最前面（SpringConfigurationPropertySources类型，sources就是Environment中的所有属性集合）
+		// ConfigurationPropertySourcesPropertySource封装了第二层
 		if (attached == null) {
 			sources.addFirst(new ConfigurationPropertySourcesPropertySource(ATTACHED_PROPERTY_SOURCE_NAME,
 					new SpringConfigurationPropertySources(sources)));
@@ -101,6 +105,17 @@ public final class ConfigurationPropertySources {
 
 	static PropertySource<?> getAttached(MutablePropertySources sources) {
 		return (sources != null) ? sources.get(ATTACHED_PROPERTY_SOURCE_NAME) : null;
+	}
+
+	/**
+	 * Return {@link Iterable} containing a single new {@link ConfigurationPropertySource}
+	 * adapted from the given Spring {@link PropertySource}.
+	 * @param source the Spring property source to adapt
+	 * @return an {@link Iterable} containing a single newly adapted
+	 * {@link SpringConfigurationPropertySource}
+	 */
+	public static Iterable<ConfigurationPropertySource> from(PropertySource<?> source) {
+		return Collections.singleton(ConfigurationPropertySource.from(source));
 	}
 
 	/**
@@ -115,23 +130,16 @@ public final class ConfigurationPropertySources {
 	public static Iterable<ConfigurationPropertySource> get(Environment environment) {
 		Assert.isInstanceOf(ConfigurableEnvironment.class, environment);
 		MutablePropertySources sources = ((ConfigurableEnvironment) environment).getPropertySources();
+		// configurationProperties 这个名称对应的 PropertySources
 		ConfigurationPropertySourcesPropertySource attached = (ConfigurationPropertySourcesPropertySource) sources
 				.get(ATTACHED_PROPERTY_SOURCE_NAME);
 		if (attached == null) {
+			// 封装了SpringConfigurationPropertySources对象
 			return from(sources);
 		}
-		return attached.getSource();
-	}
 
-	/**
-	 * Return {@link Iterable} containing a single new {@link ConfigurationPropertySource}
-	 * adapted from the given Spring {@link PropertySource}.
-	 * @param source the Spring property source to adapt
-	 * @return an {@link Iterable} containing a single newly adapted
-	 * {@link SpringConfigurationPropertySource}
-	 */
-	public static Iterable<ConfigurationPropertySource> from(PropertySource<?> source) {
-		return Collections.singleton(ConfigurationPropertySource.from(source));
+		// 正常情况下，这个地方返回的就是 SpringConfigurationPropertySources封装的 environment 中的所有属性集合对象
+		return attached.getSource();
 	}
 
 	/**

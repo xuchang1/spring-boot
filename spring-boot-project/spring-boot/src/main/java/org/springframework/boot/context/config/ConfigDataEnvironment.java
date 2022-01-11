@@ -227,9 +227,17 @@ class ConfigDataEnvironment {
 		ConfigDataEnvironmentContributors contributors = processInitial(this.contributors, importer);
 		ConfigDataActivationContext activationContext = createActivationContext(
 				contributors.getBinder(null, BinderOption.FAIL_ON_BIND_TO_INACTIVE_SOURCE));
+
+
 		contributors = processWithoutProfiles(contributors, importer, activationContext);
+
+
 		activationContext = withProfiles(contributors, activationContext);
+
+
 		contributors = processWithProfiles(contributors, importer, activationContext);
+
+
 		applyToEnvironment(contributors, activationContext, importer.getLoadedLocations(),
 				importer.getOptionalLocations());
 	}

@@ -31,6 +31,7 @@ import org.springframework.util.SystemPropertyUtils;
  * @author Madhura Bhave
  * @since 2.0.0
  */
+// 属性占位符解析
 public class PropertySourcesPlaceholdersResolver implements PlaceholdersResolver {
 
 	private final Iterable<PropertySource<?>> sources;
