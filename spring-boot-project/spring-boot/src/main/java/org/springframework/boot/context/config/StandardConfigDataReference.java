@@ -51,6 +51,7 @@ class StandardConfigDataReference {
 	StandardConfigDataReference(ConfigDataLocation configDataLocation, String directory, String root, String profile,
 			String extension, PropertySourceLoader propertySourceLoader) {
 		this.configDataLocation = configDataLocation;
+		// profile后缀
 		String profileSuffix = (StringUtils.hasText(profile)) ? "-" + profile : "";
 		this.resourceLocation = root + profileSuffix + ((extension != null) ? "." + extension : "");
 		this.directory = directory;

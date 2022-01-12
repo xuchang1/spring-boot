@@ -105,6 +105,9 @@ class ConfigDataEnvironmentContributors implements Iterable<ConfigDataEnvironmen
 				this.logger.trace(LogMessage.format("Processed imports for of %d contributors", processed));
 				return result;
 			}
+
+			// INITIAL_IMPORT 类型如果被解析出配置数据，生成的ConfigDataEnvironmentContributor集合数据是UNBOUND_IMPORT类型
+			// 再次循环时会被取出在该步进行处理变为BOUND_IMPORT类型
 			if (contributor.getKind() == Kind.UNBOUND_IMPORT) {
 				Iterable<ConfigurationPropertySource> sources = Collections
 						.singleton(contributor.getConfigurationPropertySource());
@@ -127,10 +130,12 @@ class ConfigDataEnvironmentContributors implements Iterable<ConfigDataEnvironmen
 					locationResolverContext, loaderContext, imports);
 			this.logger.trace(LogMessage.of(() -> getImportedMessage(imported.keySet())));
 
-			// asContributors将解析出来的数据，缓存到了contributors中
+			// asContributors将解析出来的数据封装，然后缓存到children中（importPhase中包含了数据，下一轮遍历当前contributor不会再被处理）
 			ConfigDataEnvironmentContributor contributorAndChildren = contributor.withChildren(importPhase,
 					asContributors(imported));
 			result = new ConfigDataEnvironmentContributors(this.logger, this.bootstrapContext,
+					// 将原contributor替换为contributorAndChildren（对应的children里面包含解析出来的配置数据）
+					// 简单可理解为将解析出的数据封装到当前解析的contributor的children数据中
 					result.getRoot().withReplacement(contributor, contributorAndChildren));
 			processed++;
 		}
@@ -153,6 +158,7 @@ class ConfigDataEnvironmentContributors implements Iterable<ConfigDataEnvironmen
 	private ConfigDataEnvironmentContributor getNextToProcess(ConfigDataEnvironmentContributors contributors,
 			ConfigDataActivationContext activationContext, ImportPhase importPhase) {
 		for (ConfigDataEnvironmentContributor contributor : contributors.getRoot()) {
+			// 为绑定UNBOUND_IMPORT或者有待处理的Imports
 			if (contributor.getKind() == Kind.UNBOUND_IMPORT
 					|| isActiveWithUnprocessedImports(activationContext, importPhase, contributor)) {
 				return contributor;
@@ -160,14 +166,14 @@ class ConfigDataEnvironmentContributors implements Iterable<ConfigDataEnvironmen
 		}
 		return null;
 	}
-
+	// active的且包含未处理的imports
 	private boolean isActiveWithUnprocessedImports(ConfigDataActivationContext activationContext,
 			ImportPhase importPhase, ConfigDataEnvironmentContributor contributor) {
 		return contributor.isActive(activationContext) && contributor.hasUnprocessedImports(importPhase);
 	}
 
 	/**
-	 * 解析出来的ConfigData数据，封装缓存到contributors中
+	 * 解析出来的ConfigData数据，封装为ConfigDataEnvironmentContributor集合数据
 	 */
 	private List<ConfigDataEnvironmentContributor> asContributors(
 			Map<ConfigDataResolutionResult, ConfigData> imported) {
@@ -181,6 +187,7 @@ class ConfigDataEnvironmentContributors implements Iterable<ConfigDataEnvironmen
 			}
 			else {
 				for (int i = data.getPropertySources().size() - 1; i >= 0; i--) {
+					// 添加的是 UNBOUND_IMPORT 类型，会被再次处理进行bound操作
 					contributors.add(ConfigDataEnvironmentContributor.ofUnboundImport(location, resource,
 							profileSpecific, data, i));
 				}

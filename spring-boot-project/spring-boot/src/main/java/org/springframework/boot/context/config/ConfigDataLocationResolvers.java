@@ -103,7 +103,9 @@ class ConfigDataLocationResolvers {
 			return Collections.emptyList();
 		}
 		for (ConfigDataLocationResolver<?> resolver : getResolvers()) {
+			// 判断是否支持解析
 			if (resolver.isResolvable(context, location)) {
+				// 进行具体解析工作
 				return resolve(resolver, context, location, profiles);
 			}
 		}

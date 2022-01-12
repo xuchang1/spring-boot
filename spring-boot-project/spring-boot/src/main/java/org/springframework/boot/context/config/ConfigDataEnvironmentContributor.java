@@ -244,13 +244,16 @@ class ConfigDataEnvironmentContributor implements Iterable<ConfigDataEnvironment
 	 * @param children the new children
 	 * @return a new contributor instance
 	 */
+	// 将解析出来的数据，缓存到children里面
 	ConfigDataEnvironmentContributor withChildren(ImportPhase importPhase,
 			List<ConfigDataEnvironmentContributor> children) {
 		Map<ImportPhase, List<ConfigDataEnvironmentContributor>> updatedChildren = new LinkedHashMap<>(this.children);
+		// 进行put操作
 		updatedChildren.put(importPhase, children);
 		if (importPhase == ImportPhase.AFTER_PROFILE_ACTIVATION) {
 			moveProfileSpecific(updatedChildren);
 		}
+		// 基于updatedChildren生成一个新的ConfigDataEnvironmentContributor对象
 		return new ConfigDataEnvironmentContributor(this.kind, this.location, this.resource,
 				this.fromProfileSpecificImport, this.propertySource, this.configurationPropertySource, this.properties,
 				this.configDataOptions, updatedChildren);

@@ -95,6 +95,7 @@ class ConfigDataImporter {
 			Profiles profiles, List<ConfigDataLocation> locations) {
 		List<ConfigDataResolutionResult> resolved = new ArrayList<>(locations.size());
 		for (ConfigDataLocation location : locations) {
+			// 解析候选资源
 			resolved.addAll(resolve(locationResolverContext, profiles, location));
 		}
 		return Collections.unmodifiableList(resolved);
@@ -103,7 +104,7 @@ class ConfigDataImporter {
 	private List<ConfigDataResolutionResult> resolve(ConfigDataLocationResolverContext locationResolverContext,
 			Profiles profiles, ConfigDataLocation location) {
 		try {
-			// ConfigTreeConfigDataLocationResolver、StandardConfigDataLocationResolver
+			// ConfigTreeConfigDataLocationResolver、StandardConfigDataLocationResolver（一般用Standard的）
 			return this.resolvers.resolve(locationResolverContext, location, profiles);
 		}
 		catch (ConfigDataNotFoundException ex) {

@@ -71,6 +71,9 @@ public class StandardConfigDataLocationResolver
 
 	private final Log logger;
 
+	/**
+	 * PropertiesPropertySourceLoader、YamlPropertySourceLoader 两种配置文件类型解析
+	 */
 	private final List<PropertySourceLoader> propertySourceLoaders;
 
 	private final String[] configNames;
@@ -85,6 +88,7 @@ public class StandardConfigDataLocationResolver
 	 */
 	public StandardConfigDataLocationResolver(Log logger, Binder binder, ResourceLoader resourceLoader) {
 		this.logger = logger;
+		// 配置文件中加载的
 		this.propertySourceLoaders = SpringFactoriesLoader.loadFactories(PropertySourceLoader.class,
 				getClass().getClassLoader());
 		this.configNames = getConfigNames(binder);
@@ -116,7 +120,7 @@ public class StandardConfigDataLocationResolver
 	@Override
 	public List<StandardConfigDataResource> resolve(ConfigDataLocationResolverContext context,
 			ConfigDataLocation location) throws ConfigDataNotFoundException {
-		// 基于 location 路径，返回所有可配置的路径文件，然后解析判断资源十分存在存在返回
+		// 基于 location 路径，返回所有可配置的路径文件，然后解析判断资源是否存在存在返回
 		return resolve(getReferences(context, location.split()));
 	}
 
@@ -135,8 +139,10 @@ public class StandardConfigDataLocationResolver
 		String resourceLocation = getResourceLocation(context, configDataLocation);
 		try {
 			if (isDirectory(resourceLocation)) {
+				// 文件夹类型解析
 				return getReferencesForDirectory(configDataLocation, resourceLocation, NO_PROFILE);
 			}
+			// 文件类型解析
 			return getReferencesForFile(configDataLocation, resourceLocation, NO_PROFILE);
 		}
 		catch (RuntimeException ex) {
@@ -248,6 +254,7 @@ public class StandardConfigDataLocationResolver
 	private List<StandardConfigDataResource> resolve(Set<StandardConfigDataReference> references) {
 		List<StandardConfigDataResource> resolved = new ArrayList<>();
 		for (StandardConfigDataReference reference : references) {
+			// 解析判断资源数据是否真实存在
 			resolved.addAll(resolve(reference));
 		}
 		if (resolved.isEmpty()) {
@@ -255,7 +262,7 @@ public class StandardConfigDataLocationResolver
 		}
 		return resolved;
 	}
-
+	// 未解析到配置数据，生成一个对应的空数据
 	private Collection<StandardConfigDataResource> resolveEmptyDirectories(
 			Set<StandardConfigDataReference> references) {
 		Set<StandardConfigDataResource> empty = new LinkedHashSet<>();
@@ -273,7 +280,7 @@ public class StandardConfigDataLocationResolver
 		}
 		return resolvePatternEmptyDirectories(reference);
 	}
-
+	// 基于文件夹，生成对应的数据
 	private Set<StandardConfigDataResource> resolveNonPatternEmptyDirectories(StandardConfigDataReference reference) {
 		Resource resource = this.resourceLoader.getResource(reference.getDirectory());
 		return (resource instanceof ClassPathResource || !resource.exists()) ? Collections.emptySet()

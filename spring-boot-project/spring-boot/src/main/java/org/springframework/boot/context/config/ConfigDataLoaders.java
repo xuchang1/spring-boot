@@ -43,6 +43,9 @@ class ConfigDataLoaders {
 
 	private final Log logger;
 
+	/**
+	 * ConfigTreeConfigDataLoader、StandardConfigDataLoader
+	 */
 	private final List<ConfigDataLoader<?>> loaders;
 
 	private final List<Class<?>> resourceTypes;
@@ -56,6 +59,7 @@ class ConfigDataLoaders {
 	ConfigDataLoaders(DeferredLogFactory logFactory, ConfigurableBootstrapContext bootstrapContext,
 			ClassLoader classLoader) {
 		this(logFactory, bootstrapContext, classLoader,
+				// 配置文件中加载的
 				SpringFactoriesLoader.loadFactoryNames(ConfigDataLoader.class, classLoader));
 	}
 
