@@ -83,6 +83,7 @@ class ConfigDataImporter {
 		try {
 			Profiles profiles = (activationContext != null) ? activationContext.getProfiles() : null;
 			List<ConfigDataResolutionResult> resolved = resolve(locationResolverContext, profiles, locations);
+			// 对存在的资源结果进行加载，读取配置数据
 			return load(loaderContext, resolved);
 		}
 		catch (IOException ex) {
@@ -102,6 +103,7 @@ class ConfigDataImporter {
 	private List<ConfigDataResolutionResult> resolve(ConfigDataLocationResolverContext locationResolverContext,
 			Profiles profiles, ConfigDataLocation location) {
 		try {
+			// ConfigTreeConfigDataLocationResolver、StandardConfigDataLocationResolver
 			return this.resolvers.resolve(locationResolverContext, location, profiles);
 		}
 		catch (ConfigDataNotFoundException ex) {

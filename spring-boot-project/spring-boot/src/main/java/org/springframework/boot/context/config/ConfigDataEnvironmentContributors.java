@@ -121,9 +121,13 @@ class ConfigDataEnvironmentContributors implements Iterable<ConfigDataEnvironmen
 			ConfigDataLoaderContext loaderContext = new ContributorDataLoaderContext(this);
 			List<ConfigDataLocation> imports = contributor.getImports();
 			this.logger.trace(LogMessage.format("Processing imports %s", imports));
+
+			// 加载配置文件数据，产生ConfigData数据
 			Map<ConfigDataResolutionResult, ConfigData> imported = importer.resolveAndLoad(activationContext,
 					locationResolverContext, loaderContext, imports);
 			this.logger.trace(LogMessage.of(() -> getImportedMessage(imported.keySet())));
+
+			// asContributors将解析出来的数据，缓存到了contributors中
 			ConfigDataEnvironmentContributor contributorAndChildren = contributor.withChildren(importPhase,
 					asContributors(imported));
 			result = new ConfigDataEnvironmentContributors(this.logger, this.bootstrapContext,
@@ -162,6 +166,9 @@ class ConfigDataEnvironmentContributors implements Iterable<ConfigDataEnvironmen
 		return contributor.isActive(activationContext) && contributor.hasUnprocessedImports(importPhase);
 	}
 
+	/**
+	 * 解析出来的ConfigData数据，封装缓存到contributors中
+	 */
 	private List<ConfigDataEnvironmentContributor> asContributors(
 			Map<ConfigDataResolutionResult, ConfigData> imported) {
 		List<ConfigDataEnvironmentContributor> contributors = new ArrayList<>(imported.size() * 5);
@@ -239,6 +246,7 @@ class ConfigDataEnvironmentContributors implements Iterable<ConfigDataEnvironmen
 
 	@Override
 	public Iterator<ConfigDataEnvironmentContributor> iterator() {
+		// 缓存的child集合
 		return this.root.iterator();
 	}
 

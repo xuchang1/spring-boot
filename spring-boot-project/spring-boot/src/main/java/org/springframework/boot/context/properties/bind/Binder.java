@@ -54,7 +54,7 @@ import org.springframework.util.Assert;
  * @since 2.0.0
  */
 
-// 绑定 ConfigurationPropertySource
+// 封装 ConfigurationPropertySource 属性源，bind()方法在属性源中根据name查询对应的属性value，并通过BindResult进行封装
 public class Binder {
 
 	private static final Set<Class<?>> NON_BEAN_CLASSES = Collections

@@ -116,6 +116,7 @@ public class StandardConfigDataLocationResolver
 	@Override
 	public List<StandardConfigDataResource> resolve(ConfigDataLocationResolverContext context,
 			ConfigDataLocation location) throws ConfigDataNotFoundException {
+		// 基于 location 路径，返回所有可配置的路径文件，然后解析判断资源十分存在存在返回
 		return resolve(getReferences(context, location.split()));
 	}
 
@@ -301,6 +302,7 @@ public class StandardConfigDataLocationResolver
 	}
 
 	private List<StandardConfigDataResource> resolveNonPattern(StandardConfigDataReference reference) {
+		// 基于地址加载对应的 Resource，进行存在性判断
 		Resource resource = this.resourceLoader.getResource(reference.getResourceLocation());
 		if (!resource.exists() && reference.isSkippable()) {
 			logSkippingResource(reference);
