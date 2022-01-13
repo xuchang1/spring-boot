@@ -510,8 +510,13 @@ class ConfigDataEnvironmentContributor implements Iterable<ConfigDataEnvironment
 		private ConfigDataEnvironmentContributor next;
 
 		private ContributorIterator() {
+			// after 类型
 			this.phase = ImportPhase.AFTER_PROFILE_ACTIVATION;
+
+			// 解析出来的after类型配置数据的迭代器
 			this.children = getChildren(this.phase).iterator();
+
+			// 一个空的迭代器
 			this.current = Collections.emptyIterator();
 		}
 
@@ -531,25 +536,34 @@ class ConfigDataEnvironmentContributor implements Iterable<ConfigDataEnvironment
 		}
 
 		/**
-		 * 想吐
+		 * 基本的迭代逻辑就是：按children数组排序，会进入最深层结构，先返回after的数据，然后返回before的数据，最后返回自身的数据
 		 */
 		private ConfigDataEnvironmentContributor fetchIfNecessary() {
 			if (this.next != null) {
 				return this.next;
 			}
+
+			// 如果是getChildren()方法返回的数据，此时会产生真实的数据
+			// 如果是下一步返回返回的ContributorIterator对象，则会进入深层次的迭代
 			if (this.current.hasNext()) {
 				this.next = this.current.next();
 				return this.next;
 			}
+
 			if (this.children.hasNext()) {
+				// 该步赋值的current也是个ContributorIterator对象，所有后续会进入该对象的fetchIfNecessary()方法
 				this.current = this.children.next().iterator();
 				return fetchIfNecessary();
 			}
+
+			// after数据解析完，解析before数据
 			if (this.phase == ImportPhase.AFTER_PROFILE_ACTIVATION) {
 				this.phase = ImportPhase.BEFORE_PROFILE_ACTIVATION;
 				this.children = getChildren(this.phase).iterator();
 				return fetchIfNecessary();
 			}
+
+			// ConfigDataEnvironmentContributor对象本身
 			if (this.phase == ImportPhase.BEFORE_PROFILE_ACTIVATION) {
 				this.phase = null;
 				this.next = ConfigDataEnvironmentContributor.this;

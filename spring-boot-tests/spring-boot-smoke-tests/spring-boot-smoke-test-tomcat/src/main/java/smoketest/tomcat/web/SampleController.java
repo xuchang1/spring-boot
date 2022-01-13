@@ -16,6 +16,8 @@
 
 package smoketest.tomcat.web;
 
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 import smoketest.tomcat.entity.Person;
 import smoketest.tomcat.exception.CustomException;
@@ -25,10 +27,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class SampleController {
+public class SampleController implements EnvironmentAware {
 
 	@Autowired
 	private HelloWorldService helloWorldService;
+
+	private Environment environment;
 
 	@GetMapping({"/test", "/test1", "/test${server.servlet.context-path}"})
 	@ResponseBody
@@ -88,5 +92,16 @@ public class SampleController {
 	@GetMapping(value = "/error")
 	public String helloWorld9() {
 		return "error.html";
+	}
+
+	@GetMapping(value = "/testEnvironment")
+	@ResponseBody
+	public String helloWorld10() {
+		return environment.getProperty("priority");
+	}
+
+	@Override
+	public void setEnvironment(Environment environment) {
+		this.environment = environment;
 	}
 }

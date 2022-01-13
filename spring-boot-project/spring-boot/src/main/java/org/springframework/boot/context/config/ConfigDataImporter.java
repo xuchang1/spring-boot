@@ -116,6 +116,7 @@ class ConfigDataImporter {
 	private Map<ConfigDataResolutionResult, ConfigData> load(ConfigDataLoaderContext loaderContext,
 			List<ConfigDataResolutionResult> candidates) throws IOException {
 		Map<ConfigDataResolutionResult, ConfigData> result = new LinkedHashMap<>();
+		// 注意加载资源的时候，是从后往前的
 		for (int i = candidates.size() - 1; i >= 0; i--) {
 			ConfigDataResolutionResult candidate = candidates.get(i);
 			ConfigDataLocation location = candidate.getLocation();

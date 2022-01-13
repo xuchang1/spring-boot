@@ -48,7 +48,7 @@ import org.springframework.util.StringUtils;
  * @author Nguyen Bao Sach
  * @since 2.4.0
  */
-// 解析了当前激活的profile
+// 解析了当前激活的profile,并加载对应的配置文件
 public class ConfigDataEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
 	/**

@@ -448,6 +448,9 @@ public class Binder {
 		return context.withIncreasedDepth(() -> aggregateBinder.bind(name, target, elementBinder));
 	}
 
+	/**
+	 * 根据名称解析属性值
+	 */
 	private <T> ConfigurationProperty findProperty(ConfigurationPropertyName name, Bindable<T> target,
 			Context context) {
 		if (name.isEmpty() || target.hasBindRestriction(BindRestriction.NO_DIRECT_PROPERTY)) {

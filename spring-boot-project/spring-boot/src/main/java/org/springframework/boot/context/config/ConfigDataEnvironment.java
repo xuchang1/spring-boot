@@ -165,14 +165,18 @@ class ConfigDataEnvironment {
 		PropertySource<?> defaultPropertySource = null;
 		for (PropertySource<?> propertySource : propertySources) {
 			if (DefaultPropertiesPropertySource.hasMatchingName(propertySource)) {
+				// 默认配置
 				defaultPropertySource = propertySource;
 			}
 			else {
 				this.logger.trace(LogMessage.format("Creating wrapped config data contributor for '%s'",
 						propertySource.getName()));
+				// 包装了一层
 				contributors.add(ConfigDataEnvironmentContributor.ofExisting(propertySource));
 			}
 		}
+
+		// 添加了contributor，用于后续配置文件的解析
 		contributors.addAll(getInitialImportContributors(binder));
 		if (defaultPropertySource != null) {
 			this.logger.trace("Creating wrapped config data contributor for default property source");
@@ -195,6 +199,8 @@ class ConfigDataEnvironment {
 		addInitialImportContributors(initialContributors, bindLocations(binder, IMPORT_PROPERTY, EMPTY_LOCATIONS));
 		addInitialImportContributors(initialContributors,
 				bindLocations(binder, ADDITIONAL_LOCATION_PROPERTY, EMPTY_LOCATIONS));
+
+		// DEFAULT_SEARCH_LOCATIONS 中，配置了默认的搜索路径
 		addInitialImportContributors(initialContributors,
 				bindLocations(binder, LOCATION_PROPERTY, DEFAULT_SEARCH_LOCATIONS));
 		return initialContributors;
@@ -226,20 +232,22 @@ class ConfigDataEnvironment {
 				this.loaders);
 		// bootstrapContext 中进行Binder注册，原型的
 		registerBootstrapBinder(this.contributors, null, DENY_INACTIVE_BINDING);
+
+		// 该步会进行application配置文件的解析加载
 		ConfigDataEnvironmentContributors contributors = processInitial(this.contributors, importer);
 		ConfigDataActivationContext activationContext = createActivationContext(
 				contributors.getBinder(null, BinderOption.FAIL_ON_BIND_TO_INACTIVE_SOURCE));
 
-
+		// activationContext无profile的处理，上一步初始化处理时该activationContext值传的null
 		contributors = processWithoutProfiles(contributors, importer, activationContext);
 
-
+		// 获取被active的profile，缓存到activationContext中
 		activationContext = withProfiles(contributors, activationContext);
 
-
+		// 加载了application-profile的配置文件
 		contributors = processWithProfiles(contributors, importer, activationContext);
 
-
+		// 产生的配置数据，应用到Environment中
 		applyToEnvironment(contributors, activationContext, importer.getLoadedLocations(),
 				importer.getOptionalLocations());
 	}
@@ -250,6 +258,15 @@ class ConfigDataEnvironment {
 		// 通过importer进行配置数据加载解析
 		contributors = contributors.withProcessedImports(importer, null);
 		registerBootstrapBinder(contributors, null, DENY_INACTIVE_BINDING);
+		return contributors;
+	}
+
+	private ConfigDataEnvironmentContributors processWithoutProfiles(ConfigDataEnvironmentContributors contributors,
+	                                                                 ConfigDataImporter importer, ConfigDataActivationContext activationContext) {
+		this.logger.trace("Processing config data environment contributors with initial activation context");
+		// 正常情况下，没做任何处理就返回了，无profile的配置文件，在processInitial时就处理完成了
+		contributors = contributors.withProcessedImports(importer, activationContext);
+		registerBootstrapBinder(contributors, activationContext, DENY_INACTIVE_BINDING);
 		return contributors;
 	}
 
@@ -264,14 +281,6 @@ class ConfigDataEnvironment {
 			}
 			throw ex;
 		}
-	}
-
-	private ConfigDataEnvironmentContributors processWithoutProfiles(ConfigDataEnvironmentContributors contributors,
-			ConfigDataImporter importer, ConfigDataActivationContext activationContext) {
-		this.logger.trace("Processing config data environment contributors with initial activation context");
-		contributors = contributors.withProcessedImports(importer, activationContext);
-		registerBootstrapBinder(contributors, activationContext, DENY_INACTIVE_BINDING);
-		return contributors;
 	}
 
 	private ConfigDataActivationContext withProfiles(ConfigDataEnvironmentContributors contributors,
@@ -338,12 +347,16 @@ class ConfigDataEnvironment {
 		checkForInvalidProperties(contributors);
 		checkMandatoryLocations(contributors, activationContext, loadedLocations, optionalLocations);
 		MutablePropertySources propertySources = this.environment.getPropertySources();
+
+		// 抽取contributors中的数据，添加到propertySources（environment）中
 		applyContributor(contributors, activationContext, propertySources);
+
 		DefaultPropertiesPropertySource.moveToEnd(propertySources);
 		Profiles profiles = activationContext.getProfiles();
 		this.logger.trace(LogMessage.format("Setting default profiles: %s", profiles.getDefault()));
 		this.environment.setDefaultProfiles(StringUtils.toStringArray(profiles.getDefault()));
 		this.logger.trace(LogMessage.format("Setting active profiles: %s", profiles.getActive()));
+		// active的profile，设置到profile中
 		this.environment.setActiveProfiles(StringUtils.toStringArray(profiles.getActive()));
 		this.environmentUpdateListener.onSetProfiles(profiles);
 	}
@@ -351,6 +364,7 @@ class ConfigDataEnvironment {
 	private void applyContributor(ConfigDataEnvironmentContributors contributors,
 			ConfigDataActivationContext activationContext, MutablePropertySources propertySources) {
 		this.logger.trace("Applying config data environment contributions");
+		// 注意此处的迭代表里逻辑，after的数据(application-profile)会出现在前面，before(application)的数据在后面
 		for (ConfigDataEnvironmentContributor contributor : contributors) {
 			PropertySource<?> propertySource = contributor.getPropertySource();
 			if (contributor.getKind() == ConfigDataEnvironmentContributor.Kind.BOUND_IMPORT && propertySource != null) {
@@ -361,7 +375,10 @@ class ConfigDataEnvironment {
 				else {
 					this.logger
 							.trace(LogMessage.format("Adding imported property source '%s'", propertySource.getName()));
+					// 解析出来的数据，添加到最后面
 					propertySources.addLast(propertySource);
+
+					// 啥事也没干
 					this.environmentUpdateListener.onPropertySourceAdded(propertySource, contributor.getLocation(),
 							contributor.getResource());
 				}

@@ -79,6 +79,10 @@ public class Profiles implements Iterable<String> {
 	 */
 	Profiles(Environment environment, Binder binder, Collection<String> additionalProfiles) {
 		this.groups = binder.bind("spring.profiles.group", STRING_STRINGS_MAP).orElseGet(LinkedMultiValueMap::new);
+		// 从binder中，获取被active的profile,注意内部逻辑，查询到第一个就返回，所以如果配置了多个，和顺序会有关系
+		// 顺序分别按照以下逻辑加载的：
+		// 1、 file:./、classpath:,文件系统的相对路径、classpath路径
+		// 2、./config路径、根路径
 		this.activeProfiles = expandProfiles(getActivatedProfiles(environment, binder, additionalProfiles));
 		this.defaultProfiles = expandProfiles(getDefaultProfiles(environment, binder));
 	}
@@ -101,6 +105,7 @@ public class Profiles implements Iterable<String> {
 				? Collections.emptySet()
 				: StringUtils.commaDelimitedListToSet(StringUtils.trimAllWhitespace(environmentPropertyValue));
 		Set<String> environmentProfiles = new LinkedHashSet<>(Arrays.asList(type.get(environment)));
+		// 根据名称，查询了对应的属性值
 		BindResult<Set<String>> boundProfiles = binder.bind(type.getName(), STRING_SET);
 		if (hasProgrammaticallySetProfiles(type, environmentPropertyValue, environmentPropertyProfiles,
 				environmentProfiles)) {

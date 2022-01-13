@@ -96,6 +96,7 @@ public class StandardConfigDataLocationResolver
 	}
 
 	private String[] getConfigNames(Binder binder) {
+		// binder中是否能获取到CONFIG_NAME_PROPERTY的值，没有默认设置DEFAULT_CONFIG_NAMES
 		String[] configNames = binder.bind(CONFIG_NAME_PROPERTY, String[].class).orElse(DEFAULT_CONFIG_NAMES);
 		for (String configName : configNames) {
 			validateConfigName(configName);

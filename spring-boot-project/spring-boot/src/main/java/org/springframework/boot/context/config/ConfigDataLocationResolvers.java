@@ -54,6 +54,7 @@ class ConfigDataLocationResolvers {
 	ConfigDataLocationResolvers(DeferredLogFactory logFactory, ConfigurableBootstrapContext bootstrapContext,
 			Binder binder, ResourceLoader resourceLoader) {
 		this(logFactory, bootstrapContext, binder, resourceLoader, SpringFactoriesLoader
+				// spi机制配置文件中加载
 				.loadFactoryNames(ConfigDataLocationResolver.class, resourceLoader.getClassLoader()));
 	}
 
@@ -114,10 +115,13 @@ class ConfigDataLocationResolvers {
 
 	private List<ConfigDataResolutionResult> resolve(ConfigDataLocationResolver<?> resolver,
 			ConfigDataLocationResolverContext context, ConfigDataLocation location, Profiles profiles) {
+		// application无后缀的解析
 		List<ConfigDataResolutionResult> resolved = resolve(location, false, () -> resolver.resolve(context, location));
 		if (profiles == null) {
 			return resolved;
 		}
+
+		// 加上profile后缀的配置文件解析
 		List<ConfigDataResolutionResult> profileSpecific = resolve(location, true,
 				() -> resolver.resolveProfileSpecific(context, location, profiles));
 		return merge(resolved, profileSpecific);
