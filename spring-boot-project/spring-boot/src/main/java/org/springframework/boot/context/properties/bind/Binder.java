@@ -486,6 +486,7 @@ public class Binder {
 				propertyTarget, handler, context, false, false);
 		return context.withDataObject(type, () -> {
 			for (DataObjectBinder dataObjectBinder : this.dataObjectBinders) {
+				// value值和java的形式去解析值
 				Object instance = dataObjectBinder.bind(name, target, context, propertyBinder);
 				if (instance != null) {
 					return instance;

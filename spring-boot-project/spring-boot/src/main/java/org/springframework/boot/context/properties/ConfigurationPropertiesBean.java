@@ -196,8 +196,10 @@ public final class ConfigurationPropertiesBean {
 	 * factory method are annotated with
 	 * {@link ConfigurationProperties @ConfigurationProperties}
 	 */
+	// 未被 @ConfigurationProperties 注解修饰的bean返回null
 	public static ConfigurationPropertiesBean get(ApplicationContext applicationContext, Object bean, String beanName) {
 		Method factoryMethod = findFactoryMethod(applicationContext, beanName);
+		// 创建 ConfigurationPropertiesBean 对象
 		return create(beanName, bean, bean.getClass(), factoryMethod);
 	}
 
@@ -263,6 +265,8 @@ public final class ConfigurationPropertiesBean {
 				: new Annotation[] { annotation };
 		ResolvableType bindType = (factory != null) ? ResolvableType.forMethodReturnType(factory)
 				: ResolvableType.forClass(type);
+
+		// 创建一个 Bindable 类型对象，包含了当前bean解析出来的注解、类型、实例
 		Bindable<Object> bindTarget = Bindable.of(bindType).withAnnotations(annotations);
 		if (instance != null) {
 			bindTarget = bindTarget.withExistingValue(instance);
